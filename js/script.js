@@ -92,14 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	const btn = document.querySelectorAll('[data-modal]'),
 		btnClose = document.querySelector('[data-close]'),
 		body = document.querySelector('body'),
-		timerId = setTimeout(showModal, 5000),
+		//timerId = setTimeout(showModal, 5000),
 		modal = document.querySelector('.modal');
 	//===============
 	//Функции
 	function showModal() {
 		modal.classList.add('show');
 		body.classList.add('stop-scroll');
-		clearTimeout(timerId);
+		//clearTimeout(timerId);
 	}
 	function closeModal() {
 		modal.classList.remove('show');
@@ -137,4 +137,60 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	//===============
+	//Class
+	class MenuCard {//Создание класса
+		constructor(src, alt, title, descr, price, parentSelector, ...classes) {//Создание конструктора, и перечня аргументов для объекта
+			this.src = src;
+			this.alt = alt;
+			this.title = title;
+			this.descr = descr;
+			this.price = price;
+			this.classes = classes;
+			this.parent = document.querySelector(parentSelector);//Привязка элемента 
+			this.transfer = 27;
+			this.changeToUAH();//Вызов метода при создания объекта
+		}
+		changeToUAH() {//Метод конвертор, который в последствии будет вызыватся при создании объекта
+			this.price = this.price * this.transfer;
+		}
+		render() {//Метод добавляющий новый элемент в верстку на основе нового объекта
+			const element = document.createElement('div');//Создаем элемент
+			if (this.classes.length === 0) {
+				this.element = 'menu__item';
+				element.classList.add(this.element);
+			} else {
+				this.classes.forEach(className => element.classList.add(className));
+			}
+
+			element.innerHTML = `<img src=${this.src} alt=${this.alt}>
+															<h3 class="menu__item-subtitle">${this.title}</h3>
+															<div class="menu__item-descr">${this.descr}</div>
+															<div class="menu__item-divider"></div>
+															<div class="menu__item-price">
+																	<div class="menu__item-cost">Цена:</div>
+																	<div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+															</div>`;//Жобавляем в него код HTML с свойствами объекта
+			this.parent.append(element);//Добавляем жлемент в конец родителя
+		}
+	}
+	new MenuCard(//Создаем объект
+		"img/tabs/vegy.jpg",
+		"vegy",
+		'Меню "Фитнес"',
+		'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов Продукт активных и здоровых людей.Это абсолютно новый продукт с оптимальной  ценой и высоким качеством!',
+		229,
+		'.menu .container',
+		'menu__item',
+		'big'
+	).render();//И вызываем метод добавляющий элемент в верстку
+
+	//FORMS
+	const forms = document.querySelectorAll('forms');
+	function postData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const request = new XMLHttpRequest();
+			request.open('POST', 'server.php');
+		});
+	}
 });

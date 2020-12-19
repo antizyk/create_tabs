@@ -90,4 +90,42 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	closeIcon.addEventListener('click', removeShow);
 	//============================
+	//Class
+	//Переменные
+	const flexBox = document.querySelector('.menu__field'),
+		foodsCard = document.querySelectorAll('.menu__item'),
+		textFood = prompt();
+	//===============
+	//Конструктор
+	class CardConstructor {
+		constructor(img, alt, title, text, cost) {
+			this.img = img;
+			this.alt = alt;
+			this.title = title;
+			this.text = text;
+			this.cost = cost;
+		}
+		createNewElemet() {
+			const foodCard = document.createElement('div');
+			flexBox.querySelector('.container').append(foodCard);
+			foodCard.classList.add('menu__item');
+			foodCard.innerHTML = `<img src="${this.img}" alt="${this.alt}">
+				<h3 class="menu__item-subtitle" >${this.title}</h3>
+          <div class="menu__item-descr">${this.text}</div>
+          <div class="menu__item-divider"></div>
+          <div class="menu__item-price">
+              <div class="menu__item-cost">Цена:</div>
+              <div class="menu__item-total"><span>${this.cost}</span> грн/день</div>
+					</div>`;
+			console.log(foodCard);
+		}
+	}
+	//===============
+	const firstCard = new CardConstructor('img/tabs/elite.jpg', 'HI', 'DINNER', textFood, 999);
+	console.log(firstCard);
+	firstCard.createNewElemet();
+	flexBox.querySelector('.container').style.flexWrap = 'wrap';
+	flexBox.querySelector('.container').querySelectorAll('.menu__item').forEach(item => {
+		item.style.flex = '0 0 30%';
+	});
 });
