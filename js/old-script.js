@@ -128,4 +128,52 @@ document.addEventListener('DOMContentLoaded', () => {
 	flexBox.querySelector('.container').querySelectorAll('.menu__item').forEach(item => {
 		item.style.flex = '0 0 30%';
 	});
+
+	//FORMS
+	const forms = document.querySelectorAll('form');//Добавляем всеформы в одну переменную
+	const message = {//Хранилище в виде объекта для сообщений о статусе отправки
+		loading: 'Загрузка',
+		success: 'Спасибо! Скоро мы с вами свяжемся',
+		failure: 'Что то пошло не так'
+	};
+
+
+
+	function postData(form) {//Создаем функцию которая будет отправлять данные на сервер
+		form.addEventListener('submit', (e) => {//Функция будет срабатывать по нажатию кнопки отправить
+			e.preventDefault();//Отменяем все эфекты по умолчанию в том числе и обновление страницы
+			const statusMessage = document.createElement('div');//Создаем блок в который будет выводится сообзение о статусе отправки
+			statusMessage.classList.add('status');//Дьавляем класс 
+			statusMessage.textContent = message.loading;//Первым в вышесозданный блок добавляем сообщение которое говорит что идет загрузка
+			form.append(statusMessage);//Добавляем этот блок в конец формы
+			const request = new XMLHttpRequest();//Создаем объект XMLHttpRequest с помощю которого мы и будем отправлять форму
+			request.open('POST', 'server.php');//Устанавливаем тип отправки и указываем адресс куда отправляем 
+			request.setRequestHeader('Content-type', 'application/json');//Укащываем тип отправляемого формата данных
+			const formData = new FormData(form);//Создаем объект FormData который собирает информацию введенную пользователем
+
+			const object = {};//Объект в который будет перемещены данные из объекта FormData да бы перевести их в json формат
+			formData.forEach((value, key) => {//Перенрсим данные с помощю forEach
+				object[key] = value;
+			});
+
+			const json = JSON.stringify(object);//Конвертируем данные в JSON
+
+			request.send(json);//и отправляем данные на сервер
+
+			request.addEventListener('load', () => {//Что происзодит после отправки формы
+				if (request.status === 200) {//Если данные удачно отправились
+					console.log(request.response);//Выодит эти данные в консоль
+					statusMessage.textContent = message.success;//Меняем статус сообзения на успешно
+					form.reset();//Чистим форму
+					setTimeout(() => { statusMessage.remove() }, 2000);//Через 2 сек убираем сообзение
+				} else {
+					statusMessage.textContent = message.failure;//Если отправка не произошла то выводим сообщение об ошибке
+				}
+			});
+		});
+	}
+
+	forms.forEach(item => {
+		postData(item);
+	});
 });

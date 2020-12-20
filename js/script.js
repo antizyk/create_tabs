@@ -185,48 +185,50 @@ document.addEventListener('DOMContentLoaded', () => {
 	).render();//И вызываем метод добавляющий элемент в верстку
 
 	//FORMS
+	//---variables---
 	const forms = document.querySelectorAll('form');
+	//===============
+	//---objects---
 	const message = {
 		loading: 'Загрузка',
 		success: 'Спасибо! Скоро мы с вами свяжемся',
 		failure: 'Что то пошло не так'
 	};
-	forms.forEach(item => {
-		postData(item);
-	});
-
-
-	function postData(form) {
+	//===============
+	//---functions---
+	function sendForm(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			const statusMessage = document.createElement('div');
-			statusMessage.classList.add('status');
-			statusMessage.textContent = message.loading;
-			form.append(statusMessage);
+			const div = document.createElement('div');
+			div.classList.add('message');
+			div.textContent = message.loading;
+			form.append(div);
 			const request = new XMLHttpRequest();
 			request.open('POST', 'server.php');
-			request.setRequestHeader('Content-type', 'application/json');
 			const formData = new FormData(form);
-
+			request.setRequestHeader('Content-type', 'application/json');
 			const object = {};
 			formData.forEach((value, key) => {
 				object[key] = value;
 			});
-
 			const json = JSON.stringify(object);
-
 			request.send(json);
-
 			request.addEventListener('load', () => {
 				if (request.status === 200) {
 					console.log(request.response);
-					statusMessage.textContent = message.success;
-					form.reset();
-					setTimeout(() => { statusMessage.remove() }, 2000);
+					div.textContent = message.success;
 				} else {
-					statusMessage.textContent = message.failure;
+					div.textContent = message.failure;
 				}
 			});
 		});
 	}
+	//===============
+	//---call_functions---
+	forms.forEach(item => {
+		sendForm(item);
+	});
+	//=============== 
+
+
 });
